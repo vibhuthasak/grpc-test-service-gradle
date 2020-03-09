@@ -13,11 +13,23 @@ public class ProductInfoImpl extends ProductInfoGrpc.ProductInfoImplBase {
 
   @Override
   public void addProduct(ProductInfoOuterClass.Product request, StreamObserver<ProductInfoOuterClass.ProductId> responseObserver) {
-
+    UUID uuid = UUID.randomUUID();
+    String randomUUIDString = uuid.toString();
+    productMap.put(randomUUIDString, request);
+    request = request.toBuilder().setId(randomUUIDString).build();
+    ProductInfoOuterClass.ProductId id = ProductInfoOuterClass.ProductId.newBuilder().setValue(randomUUIDString).build();
+    responseObserver.onNext(id);
+    responseObserver.onCompleted();
   }
 
   @Override
   public void getProduct(ProductInfoOuterClass.ProductId request, StreamObserver<ProductInfoOuterClass.Product> responseObserver) {
-
+    String id = request.getValue();
+    if(productMap.containsKey(id)){
+      responseObserver.onNext((ProductInfoOuterClass.Product) productMap.get(id));
+      responseObserver.onCompleted();
+    } else {
+      responseObserver.onError(new StatusException(Status.NOT_FOUND));
+    }
   }
 }
