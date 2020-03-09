@@ -13,6 +13,7 @@ public class ProductInfoImpl extends ProductInfoGrpc.ProductInfoImplBase {
 
   @Override
   public void addProduct(ProductInfoOuterClass.Product request, StreamObserver<ProductInfoOuterClass.ProductId> responseObserver) {
+    System.out.println("Add product called");
     UUID uuid = UUID.randomUUID();
     String randomUUIDString = uuid.toString();
     productMap.put(randomUUIDString, request);
@@ -25,6 +26,7 @@ public class ProductInfoImpl extends ProductInfoGrpc.ProductInfoImplBase {
   @Override
   public void getProduct(ProductInfoOuterClass.ProductId request, StreamObserver<ProductInfoOuterClass.Product> responseObserver) {
     String id = request.getValue();
+    System.out.println("Get product called");
     if(productMap.containsKey(id)){
       responseObserver.onNext((ProductInfoOuterClass.Product) productMap.get(id));
       responseObserver.onCompleted();
